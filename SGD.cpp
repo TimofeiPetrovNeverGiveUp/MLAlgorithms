@@ -4,6 +4,8 @@
 #include <iostream>
 #include <chrono>
 
+std::vector<double> wf = {0.0,0.0,0.0};
+
 //sigmoid loss function
 double loss(std::vector<double> &w, std::vector<double> &x, double y)
 {
@@ -18,7 +20,7 @@ double loss(std::vector<double> &w, std::vector<double> &x, double y)
 }
 
 //d(loss)
-std::vector<double> dloss(std::vector<double> &w, std::vector<double> &x, double y)
+void dloss(std::vector<double> &w, std::vector<double> &x, double y)
 {
 	double M = 0.0;
 	for (int i = 0; i < 3; ++i)
@@ -29,12 +31,10 @@ std::vector<double> dloss(std::vector<double> &w, std::vector<double> &x, double
 	double result = pow((1 + std::exp(M)), -2);
 	result *= -2;
 	result *= std::exp(M);
-	std::vector<double> x_copy = { x[0],x[1],x[2] };
 	for (int i = 0; i < 3; ++i)
 	{
-		x_copy[i] *= result * y;
+		wf[i] = x[i] * result * y;
 	}
-	return x_copy;
 }
 
 int main()
@@ -78,7 +78,7 @@ int main()
 	{
 		int k = dist(gen); //random index
 		double ek = loss(w, x_train[k], y_train[k]); //loss
-		std::vector<double> wf = dloss(w, x_train[k], y_train[k]); //SGD
+		dloss(w, x_train[k], y_train[k]); //SGD
 		for (int i = 0; i < 3; ++i)
 		{
 			w[i] = w[i] - nt*wf[i];
@@ -96,4 +96,3 @@ int main()
 	std::cout << "\n" << "Q: " << Q;
 	return 0;
 }
-
